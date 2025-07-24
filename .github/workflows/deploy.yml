@@ -1,0 +1,47 @@
+name: Validate with cfn-nag and Deploy to AWS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  validate-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎️ Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Install Ruby & cfn-nag
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ruby ruby-dev build-essential jq
+          sudo gem install cfn-nag
+
+      - name: 🔍 Run cfn-nag Scan
+        run: |
+          echo "Running cfn-nag scan on s3-bucket.yaml..."
+          cfn_nag_scan --input-path s3-bucket.yaml --output-format json > cfn-nag-report.json
+
+          FAILURE_COUNT=$(jq '.failure_count' cfn-nag-report.json)
+
+          if [ "$FAILURE_COUNT" -gt 0 ]; then
+            echo "❌ CFN-Nag found $FAILURE_COUNT issue(s). Aborting deployment."
+            cat cfn-nag-report.json
+            exit 1
+          else
+            echo "✅ CFN-Nag found no issues. Proceeding to deployment."
+          fi
+
+      - name: 🔐 Configure AWS Credentials
+        run: |
+          aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY }}"
+          aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_KEY }}"
+          aws configure set region "${{ secrets.AWS_DEFAULT_REGION }}"
+
+      - name: 🚀 Deploy CloudFormation Stack
+        run: |
+          aws cloudformation deploy \
+            --template-file s3-bucket.yaml \
+            --stack-name s3-bucket-github-actions \
+            --capabilities CAPABILITY_NAMED_IAM
