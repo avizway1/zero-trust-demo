@@ -5,13 +5,13 @@ Resources:
   MySecureBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: my-gh-secure-bucket-1234567890
+      BucketName: my-gh-secure-bucket-1234567890-avi
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
       PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
