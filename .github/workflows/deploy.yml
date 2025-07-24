@@ -20,14 +20,15 @@ jobs:
 
       - name: 🔍 Run cfn-nag Scan
         run: |
-          echo "Running cfn-nag scan on s3-bucket.yaml..."
-          cfn_nag_scan --input-path s3-bucket.yaml --output-format json > cfn-nag-report.json
+          echo "Running cfn-nag scan on current folder..."
+          mkdir -p cfn-nag-reports
+          cfn_nag_scan --input-path . --output-format json > cfn-nag-reports/report.json
 
-          FAILURE_COUNT=$(jq '.failure_count' cfn-nag-report.json)
+          FAILURE_COUNT=$(jq '[.[].fail_count] | add' cfn-nag-reports/report.json)
 
           if [ "$FAILURE_COUNT" -gt 0 ]; then
             echo "❌ CFN-Nag found $FAILURE_COUNT issue(s). Aborting deployment."
-            cat cfn-nag-report.json
+            cat cfn-nag-reports/report.json
             exit 1
           else
             echo "✅ CFN-Nag found no issues. Proceeding to deployment."
