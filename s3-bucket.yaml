@@ -1,8 +1,16 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Sample S3 Bucket from GitHub Actions
+Description: S3 bucket via GitHub Actions
 
 Resources:
-  MyS3Bucket:
+  MySecureS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: my-gh-actions-bucket-unique-9876543210
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
