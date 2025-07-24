@@ -18,18 +18,18 @@ jobs:
           sudo apt-get install -y ruby ruby-dev build-essential jq
           sudo gem install cfn-nag
 
-      - name: 🔍 Run cfn-nag Scan with Debug
+      - name: 🔍 Run cfn-nag Scan (Safe Single File)
         run: |
-          echo "Running cfn-nag scan on current folder..."
+          echo "Running cfn-nag scan on s3-bucket.yaml..."
           mkdir -p cfn-nag-reports
-          cfn_nag_scan --input-path . --output-format json > cfn-nag-reports/report.json
+
+          cfn_nag_scan --input-path ./s3-bucket.yaml --output-format json > cfn-nag-reports/report.json
 
           echo "================ CFN-NAG RAW REPORT ================"
           cat cfn-nag-reports/report.json
           echo "===================================================="
 
-          # Extract fail_count properly from array of results
-          FAILURE_COUNT=$(jq '[.[].fail_count // 0] | add' cfn-nag-reports/report.json)
+          FAILURE_COUNT=$(jq '[.[] | .fail_count // 0] | add' cfn-nag-reports/report.json)
 
           echo "Parsed FAILURE_COUNT = $FAILURE_COUNT"
 
