@@ -18,17 +18,23 @@ jobs:
           sudo apt-get install -y ruby ruby-dev build-essential jq
           sudo gem install cfn-nag
 
-      - name: 🔍 Run cfn-nag Scan
+      - name: 🔍 Run cfn-nag Scan with Debug
         run: |
           echo "Running cfn-nag scan on current folder..."
           mkdir -p cfn-nag-reports
           cfn_nag_scan --input-path . --output-format json > cfn-nag-reports/report.json
 
-          FAILURE_COUNT=$(jq '[.[].fail_count] | add' cfn-nag-reports/report.json)
+          echo "================ CFN-NAG RAW REPORT ================"
+          cat cfn-nag-reports/report.json
+          echo "===================================================="
+
+          # Extract fail_count properly from array of results
+          FAILURE_COUNT=$(jq '[.[].fail_count // 0] | add' cfn-nag-reports/report.json)
+
+          echo "Parsed FAILURE_COUNT = $FAILURE_COUNT"
 
           if [ "$FAILURE_COUNT" -gt 0 ]; then
             echo "❌ CFN-Nag found $FAILURE_COUNT issue(s). Aborting deployment."
-            cat cfn-nag-reports/report.json
             exit 1
           else
             echo "✅ CFN-Nag found no issues. Proceeding to deployment."
