@@ -1,22 +1,28 @@
-name: Validate with cfn-nag and Deploy to AWS
+name: Lint, Validate, and Deploy CloudFormation
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  validate-deploy:
+  lint-validate-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: 🛎️ Checkout Code
         uses: actions/checkout@v4
 
-      - name: 🔧 Install Ruby & cfn-nag
+      - name: 🔧 Install Tools (cfn-lint, cfn-nag)
         run: |
           sudo apt-get update
-          sudo apt-get install -y ruby ruby-dev build-essential jq
+          sudo apt-get install -y python3-pip ruby ruby-dev build-essential jq
           sudo gem install cfn-nag
+          pip install cfn-lint
+
+      - name: 🧹 Run cfn-lint
+        run: |
+          echo "Running cfn-lint on s3-bucket.yaml..."
+          cfn-lint s3-bucket.yaml
 
       - name: 🔍 Run cfn-nag Scan (Safe Single File)
         run: |
