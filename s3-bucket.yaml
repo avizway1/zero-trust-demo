@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: S3 bucket with public read ACL (Triggers FAIL in cfn-nag)
+Description: S3 bucket with public read ACL (Triggers FAIL in cfn-nag) 
 
 Resources:
   InsecurePublicBucket:
