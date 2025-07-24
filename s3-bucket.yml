@@ -1,11 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Secure S3 Bucket Deployment
+Description: Secure S3 Bucket from GitHub Actions
 
 Resources:
   MySecureBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: my-gh-bucket-secure-1234567890
+      BucketName: my-gh-secure-bucket-1234567890
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
