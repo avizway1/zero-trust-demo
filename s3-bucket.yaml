@@ -1,17 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Secure S3 Bucket from GitHub Actions
+Description: Insecure S3 Bucket for testing cfn-nag failure
 
 Resources:
-  MySecureBucket:
+  InsecureS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: my-gh-secure-bucket-1234567890-avi
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
+      BucketName: cfn-nag-test-bucket-123456
