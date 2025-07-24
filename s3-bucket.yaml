@@ -1,8 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Insecure S3 Bucket for testing cfn-nag failure
+Description: S3 bucket with public read ACL (Triggers FAIL in cfn-nag)
 
 Resources:
-  InsecureS3Bucket:
+  InsecurePublicBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: cfn-nag-test-bucket-123456
+      BucketName: my-public-cfn-nag-bucket-9876543210-unq
+      AccessControl: PublicRead
