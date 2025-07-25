@@ -6,3 +6,4 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: my-public-cfn-nag-bucket-9876543210-unq
+      AccessControl: PublicRead
